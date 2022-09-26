@@ -118,8 +118,6 @@ func setupLayerItems(layer *Layer) {
 
 	layer.Items = layerItems
 	layer.CoefficientsSum = coefficientsSum
-
-	fmt.Println(len(layer.Items))
 }
 
 func getNameAndCoeffient(fileName string) (string, int) {

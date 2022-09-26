@@ -6,10 +6,14 @@ import (
 	"engine/save"
 	"engine/timer"
 	"fmt"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	defer timer.Timer(fmt.Sprintf("Generating took"))()
 
 	config := configuration.Parse()

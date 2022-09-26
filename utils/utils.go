@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 )
 
 func DeepPrint(object interface{}) {
@@ -18,17 +19,18 @@ func IndexFactory(count int) func() int {
 	currentIndex := 0
 
 	return func() int {
-		index := list[currentIndex]
+		id := list[currentIndex]
 		currentIndex++
-		return index
+
+		return id
 	}
 }
 
 func randomize(count int) []int {
-	list := make([]int, count)
+	list := rand.Perm(count)
 
 	for i := 0; i < count; i++ {
-		list[i] = i + 1
+		list[i] = list[i] + 1
 	}
 
 	return list

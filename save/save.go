@@ -13,8 +13,14 @@ import (
 )
 
 func MetadataHandler(config *configuration.Configuration, mdc <-chan *metadata.Metadata, onGenerate func()) {
+	busy := make(chan int, 20)
+
 	for md := range mdc {
-		go save(md, config.Size, onGenerate)
+		busy <- 1
+		go save(md, config.Size, func() {
+			onGenerate()
+			<-busy
+		})
 	}
 }
 

@@ -1,0 +1,25 @@
+{
+  "name": "Test Project Name",
+  "imageBase": "REPLACE",
+  "size": 2048,
+  "generations": [
+    {
+      "growEditionSizeTo": 10,
+      "layers": [
+        {
+          "name": "1 OF 1",
+          "displayName": "1 of 1"
+        }
+      ]
+    },
+    {
+      "growEditionSizeTo": 11,
+      "layers": [
+        {
+          "name": "BACKGROUND",
+          "displayName": "Background"
+        }
+      ]
+    }
+  ]
+}

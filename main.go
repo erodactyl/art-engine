@@ -1,31 +1,31 @@
 package main
 
 import (
-	"engine/generation"
-	"engine/generator"
+	"engine/configuration"
 	"engine/metadata"
+	"engine/save"
 	"engine/timer"
 	"fmt"
-	"path/filepath"
 	"sync"
 )
 
 func main() {
-	defer timer.Timer(fmt.Sprintf("Generating %d images took", generation.Count))()
+	defer timer.Timer(fmt.Sprintf("Generating took"))()
 
-	basePath, err := filepath.Abs(generation.LayersPath)
-	if err != nil {
-		panic(fmt.Sprintf("Count not locate basePath at %s", generation.LayersPath))
-	}
+	config := configuration.Parse()
 
-	c := make(chan metadata.Metadata)
+	totalCount := config.Generations[len(config.Generations)-1].GrowEditionSizeTo
 
-	wg := sync.WaitGroup{}
-	wg.Add(generation.Count)
+	mdc := make(chan *metadata.Metadata)
 
-	go generator.ConsumeMetadata(c, &wg)
+	wg := &sync.WaitGroup{}
+	wg.Add(totalCount)
 
-	metadata.StartGeneration(generation.Count, basePath, generation.Layers, c)
+	go save.MetadataHandler(config, mdc, func() {
+		wg.Done()
+	})
+
+	metadata.StartGeneration(config, mdc)
 
 	wg.Wait()
 }

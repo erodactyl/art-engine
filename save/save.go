@@ -1,8 +1,8 @@
-package generator
+package save
 
 import (
 	"encoding/json"
-	"engine/generation"
+	"engine/configuration"
 	"engine/metadata"
 	"fmt"
 	"image"
@@ -10,24 +10,21 @@ import (
 	"image/png"
 	"io/ioutil"
 	"os"
-	"sync"
 )
 
-func ConsumeMetadata(subsciber <-chan metadata.Metadata, wg *sync.WaitGroup) {
-	for i := 0; i < 10; i++ {
-		go consumer(subsciber, wg)
+func MetadataHandler(config *configuration.Configuration, mdc <-chan *metadata.Metadata, onGenerate func()) {
+	for md := range mdc {
+		go save(md, config.Size, onGenerate)
 	}
 }
 
-func consumer(subsciber <-chan metadata.Metadata, wg *sync.WaitGroup) {
-	for md := range subsciber {
-		generateImage(md)
-		saveMetadata(md)
-		wg.Done()
-	}
+func save(md *metadata.Metadata, size int, onGenerate func()) {
+	saveMetadata(md)
+	generateImage(md, size)
+	onGenerate()
 }
 
-func saveMetadata(md metadata.Metadata) {
+func saveMetadata(md *metadata.Metadata) {
 	path := fmt.Sprintf("build/metadata/%d.json", md.Id)
 
 	out, err := os.Create(path)
@@ -44,8 +41,8 @@ func saveMetadata(md metadata.Metadata) {
 	ioutil.WriteFile(path, res, os.ModePerm)
 }
 
-func generateImage(md metadata.Metadata) {
-	dest := image.NewRGBA(image.Rect(0, 0, generation.Size, generation.Size))
+func generateImage(md *metadata.Metadata, size int) {
+	dest := image.NewRGBA(image.Rect(0, 0, size, size))
 
 	fmt.Println("Generating image ", md.Id)
 

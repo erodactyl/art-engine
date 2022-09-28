@@ -7,6 +7,9 @@ import (
 	"sync"
 )
 
+// Parallely execute `operation` on all items in the slice `elements`.
+// Use `routines` number of goroutines.
+// The function call will wait for all operation to run.
 func ParallelForEach[T any](elements []T, operation func(el T), routines int) {
 	// Wait group to wait until all operations are ran before moving on
 	wg := sync.WaitGroup{}

@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 )
 
 func main() {
@@ -37,19 +36,13 @@ func main() {
 		}
 	}
 
-	wg := sync.WaitGroup{}
-	wg.Add(len(files))
-
 	utils.ParallelForEach(files, func(file os.FileInfo) {
 		path := fmt.Sprintf("build/metadata/%s", file.Name())
 		updateFile(path, hash)
 
 		fmt.Println(fmt.Sprintf("File %s was updated", path))
 
-		wg.Done()
 	}, 10)
-
-	wg.Wait()
 
 	fmt.Println(fmt.Sprintf("%d files updated", len(files)))
 }

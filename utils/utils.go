@@ -6,6 +6,18 @@ import (
 	"math/rand"
 )
 
+func ParallelForEach[T any](elements []T, operation func(el T), routines int) {
+	busy := make(chan bool, routines)
+
+	for _, _el := range elements {
+		busy <- true
+		go (func(el T) {
+			operation(el)
+			<-busy
+		})(_el)
+	}
+}
+
 func DeepPrint(object interface{}) {
 	objectJSON, err := json.MarshalIndent(&object, "", "  ")
 
